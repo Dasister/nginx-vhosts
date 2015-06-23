@@ -6,8 +6,14 @@
 #                                                          #
 ############################################################
 
-# Nginx VHosts path
-NGINX_VHOST_PATH=/etc/nginx/conf.d
+# Nginx config directory.
+NGINX_CONF_PATH=/etc/nginx
+### Unused ###
+NGINX_SITES_ENABLED_PATH="$NGINX_CONF_PATH"/sites-enabled
+NGINX_SITES_AVAILABLE_PATH="$NGINX_CONF_PATH"/sites-available
+NGINX_VHOST_PATH=/etc/nginx/conf.d          #     Old constant.
+### Unused ###
+NGINX_CONFD_PATH="$NGINX_CONF_PATH"/conf.d
 NGINX_DEFAULT_VHOST_PATH=/var/www
 
 ############################################################
@@ -23,7 +29,7 @@ NGINX_DEFAULT_VHOST_PATH=/var/www
 #
 
 # Command Line Arguments
-#   -h path - Path of the VHost root
+#   -p path - Path of the VHost root
 #   --disable-php-fpm - Disable php-fpm
 #   -u user
 #   -g group
@@ -53,7 +59,7 @@ while [[ $# > 0 ]]; do
     ENABLE_PHP_FPM=false
   ;;
   -p)
-    VHOST_ROOT="$2/$VHOST_NAME"
+    VHOST_ROOT=$(echo "$2" | sed -e 's#/$##')/"$VHOST_NAME" # Strip trailing slashes.
     shift
   ;;
   -u)
@@ -79,7 +85,7 @@ VHOST_HTML_PATH="$VHOST_ROOT"/public_html
 VHOST_LOG_PATH="$VHOST_ROOT"/logs
 VHOST_ACCESS_LOG_PATH="$VHOST_LOG_PATH"/access.nginx.log
 VHOST_ERROR_LOG_PATH="$VHOST_LOG_PATH"/error.nginx.log
-VHOST_CONFIG_PATH="$NGINX_VHOST_PATH/$VHOST_NAME.conf"
+VHOST_CONFIG_PATH="$NGINX_CONFD_PATH/$VHOST_NAME.conf"
 
 
 case $COMMAND in
